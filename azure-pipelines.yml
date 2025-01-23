@@ -1,0 +1,37 @@
+trigger:
+  branches:
+    include:
+      - main   # Cambia esta rama si usas otra rama principal
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  # Paso 1: Clonar el repositorio
+  - task: Checkout@1
+
+  # Paso 2: Usar .NET SDK (Asegura la versión correcta)
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '9.x'  # Cambia según la versión .NET de tu proyecto
+
+  # Paso 3: Restaurar dependencias NuGet
+  - script: dotnet restore
+    displayName: 'Restaurar dependencias NuGet'
+
+  # Paso 4: Compilar la solución
+  - script: dotnet build --configuration Release
+    displayName: 'Compilar solución'
+  
+  # Paso 5: Ejecutar pruebas
+  - script: dotnet test --configuration Release --logger trx
+    displayName: 'Ejecutar pruebas'
+
+  # Paso 6: Publicar artefactos
+  - script: dotnet publish -c Release -o $(Build.ArtifactStagingDirectory)/output
+    displayName: 'Publicar artefactos'
+
+  - publish: $(Build.ArtifactStagingDirectory)/output
+    artifact: drop
+    displayName: 'Publicar artefactos como "drop"'
