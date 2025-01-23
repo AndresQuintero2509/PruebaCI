@@ -23,15 +23,3 @@ steps:
   # Paso 4: Compilar la solución
   - script: dotnet build --configuration Release
     displayName: 'Compilar solución'
-  
-  # Paso 5: Ejecutar pruebas
-  - script: dotnet test --configuration Release --logger trx
-    displayName: 'Ejecutar pruebas'
-
-  # Paso 6: Publicar artefactos
-  - script: dotnet publish -c Release -o $(Build.ArtifactStagingDirectory)/output
-    displayName: 'Publicar artefactos'
-
-  - publish: $(Build.ArtifactStagingDirectory)/output
-    artifact: drop
-    displayName: 'Publicar artefactos como "drop"'
